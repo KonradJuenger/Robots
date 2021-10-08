@@ -12,7 +12,7 @@ namespace Robots
 {
     [Flags]
     public enum RobotConfigurations { None = 0, Shoulder = 1, Elbow = 2, Wrist = 4, Undefined = 8 }
-    public enum Motions { Joint, Linear, Circular, Spline }
+    public enum Motions { Joint, Linear, Circular, Spline, constantSpeed }
 
     public abstract class Target : IToolpath
     {
@@ -74,12 +74,14 @@ namespace Robots
         public Plane Plane { get; set; }
         public RobotConfigurations? Configuration { get; set; }
         public Motions Motion { get; set; }
+        public bool pTarget;
 
         public CartesianTarget(Plane plane, RobotConfigurations? configuration = null, Motions motion = Motions.Joint, Tool tool = null, Speed speed = null, Zone zone = null, Command command = null, Frame frame = null, IEnumerable<double> external = null) : base(tool, speed, zone, command, frame, external)
         {
             this.Plane = plane;
             this.Motion = motion;
             this.Configuration = configuration;
+            this.pTarget = false;
         }
 
         public CartesianTarget(Plane plane, Target target, RobotConfigurations? configuration = null, Motions motion = Motions.Joint, IEnumerable<double> external = null) : this(plane, configuration, motion, target.Tool, target.Speed, target.Zone, target.Command, target.Frame, external ?? target.External) { }
@@ -220,6 +222,7 @@ namespace Robots
 
         internal bool IsJointTarget => Target is JointTarget;
         public bool IsJointMotion => IsJointTarget || (Target as CartesianTarget).Motion == Motions.Joint;
+        public bool IsPMotion => (Target as CartesianTarget).Motion == Motions.constantSpeed;
         public Plane WorldPlane => Kinematics.Planes[Kinematics.Planes.Length - 1];
         public int Index => cellTarget.Index;
 
@@ -345,6 +348,20 @@ namespace Robots
                 var joints = allJoints.RangeSubset(0, 6);
                 return new JointTarget(joints, Target, external);
             }
+            
+            else if (IsPMotion)
+            {
+                Plane prevPlane = GetPrevPlane(prevTarget);
+                Plane plane = robot.CartesianLerp(prevPlane, Plane, t, start, end);
+                //   Plane plane = CartesianTarget.Lerp(prevTarget.WorldPlane, this.WorldPlane, t, start, end);
+                //  Target.RobotConfigurations? configuration = (Abs(prevTarget.cellTarget.TotalTime - t) < TimeTol) ? prevTarget.Kinematics.Configuration : this.Kinematics.Configuration;
+
+                var target = new CartesianTarget(plane, Target, prevTarget.Kinematics.Configuration, Motions.constantSpeed, external);
+                target.pTarget = true;
+                // target.Frame = Frame.Default;
+                return target;
+            }
+            
             else
             {
                 Plane prevPlane = GetPrevPlane(prevTarget);

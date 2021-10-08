@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <RootNamespace>Robots</RootNamespace>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputPath>C:\Users\vicen\AppData\Roaming\Grasshopper\Libraries</OutputPath>
+    <OutputPath>C:\Users\elab\Documents\bauhaus40\KHBots\built\</OutputPath>
+    <AssemblyName>RobotsGH</AssemblyName>
+    <PackageId>RobotsGH</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

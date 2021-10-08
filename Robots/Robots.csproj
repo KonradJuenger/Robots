@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AssemblyName>Robots</AssemblyName>
+    <PackageId>Robots</PackageId>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\Users\vicen\AppData\Roaming\Grasshopper\Libraries</OutputPath>
+    <OutputPath>C:\Users\elab\Documents\bauhaus40\KHBots\built\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>C:\Users\vicen\AppData\Roaming\Grasshopper\Libraries</OutputPath>
+    <OutputPath>C:\Users\elab\Documents\bauhaus40\KHBots\built\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +26,10 @@
 
   <ItemGroup>
     <Reference Include="ABB.Robotics.Controllers.PC">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\ABB\SDK\PCSDK 2019\ABB.Robotics.Controllers.PC.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\ABB\RobotStudio 2020\Bin\ABB.Robotics.Controllers.PC.dll</HintPath>
+    </Reference>
+    <Reference Include="RobotStudio.Services.RobApi">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\ABB\RobotStudio 2020\Bin\RobotStudio.Services.RobApi.dll</HintPath>
     </Reference>
   </ItemGroup>
 

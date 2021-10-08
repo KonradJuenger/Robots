@@ -346,6 +346,66 @@ namespace Robots
 
                         moveText = $"  movej([{joints[0]:0.####}, {joints[1]:0.####}, {joints[2]:0.####}, {joints[3]:0.####}, {joints[4]:0.####}, {joints[5]:0.####}], a={axisAccel:0.####}, {speed}, r={zoneDistance})";
                     }
+                    else if (programTarget.IsPMotion)
+                    {
+                        var cartesian = target as CartesianTarget;
+                        var plane = cartesian.Plane;
+                        plane.Transform(Transform.PlaneToPlane(Plane.WorldXY, target.Frame.Plane));
+                        plane.Transform(Transform.PlaneToPlane(cell.BasePlane, Plane.WorldXY));
+                        var axisAngle = cell.PlaneToNumbers(plane);
+
+                        switch (cartesian.Motion)
+                        {
+                            case Motions.Joint:
+                                {
+                                    double maxAxisSpeed = robot.Joints.Min(x => x.MaxSpeed);
+                                    double percentage = (cellTarget.DeltaTime > 0) ? cellTarget.MinTime / cellTarget.DeltaTime : 0.1;
+                                    double axisSpeed = percentage * maxAxisSpeed;
+                                    double axisAccel = target.Speed.AxisAccel;
+
+                                    string speed = null;
+                                    if (target.Speed.Time == 0)
+                                        speed = $"v={axisSpeed: 0.###}";
+                                    else
+                                        speed = $"t={target.Speed.Time: 0.###}";
+
+                                    moveText = $"  movej(p[{axisAngle[0]:0.#####}, {axisAngle[1]:0.#####}, {axisAngle[2]:0.#####}, {axisAngle[3]:0.#####}, {axisAngle[4]:0.#####}, {axisAngle[5]:0.#####}],a={axisAccel:0.#####},{speed},r={zoneDistance})";
+                                    break;
+                                }
+
+                            case Motions.Linear:
+                                {
+                                    double linearSpeed = target.Speed.TranslationSpeed / 1000;
+                                    double linearAccel = target.Speed.TranslationAccel / 1000;
+
+                                    string speed = null;
+                                    if (target.Speed.Time == 0)
+                                        // speed = $"v={linearSpeed: 0.000}";
+                                        speed = $"v={target.Speed.Name}";
+                                    else
+                                        speed = $"t={target.Speed.Time: 0.000}";
+
+                                    moveText = $"  movel(p[{axisAngle[0]:0.#####}, {axisAngle[1]:0.#####}, {axisAngle[2]:0.#####}, {axisAngle[3]:0.#####}, {axisAngle[4]:0.#####}, {axisAngle[5]:0.#####}],a={linearAccel:0.#####},{speed},r={zoneDistance})";
+                                    break;
+                                }
+                            case Motions.constantSpeed:
+                                {
+                                    double linearSpeed = target.Speed.TranslationSpeed / 1000;
+                                    double linearAccel = target.Speed.TranslationAccel / 1000;
+
+                                    string speed = null;
+                                    if (target.Speed.Time == 0)
+                                        // speed = $"v={linearSpeed: 0.000}";
+                                        speed = $"v={target.Speed.Name}";
+                                    else
+                                        speed = $"t={target.Speed.Time: 0.000}";
+
+                                    moveText = $"  movep(p[{axisAngle[0]:0.#####}, {axisAngle[1]:0.#####}, {axisAngle[2]:0.#####}, {axisAngle[3]:0.#####}, {axisAngle[4]:0.#####}, {axisAngle[5]:0.#####}],a={linearAccel:0.#####},{speed},r={zoneDistance})";
+                                    break;
+                                }
+                        }
+                    }
+
                     else
                     {
                         var cartesian = target as CartesianTarget;
@@ -388,8 +448,53 @@ namespace Robots
                                     moveText = $"  movel(p[{axisAngle[0]:0.#####}, {axisAngle[1]:0.#####}, {axisAngle[2]:0.#####}, {axisAngle[3]:0.#####}, {axisAngle[4]:0.#####}, {axisAngle[5]:0.#####}],a={linearAccel:0.#####},{speed},r={zoneDistance})";
                                     break;
                                 }
+
+                            case Motions.constantSpeed:
+                                {
+                                    double linearSpeed = target.Speed.TranslationSpeed / 1000;
+                                    double linearAccel = target.Speed.TranslationAccel / 1000;
+
+                                    string speed = null;
+                                    if (target.Speed.Time == 0)
+                                        // speed = $"v={linearSpeed: 0.000}";
+                                        speed = $"v={target.Speed.Name}";
+                                    else
+                                        speed = $"t={target.Speed.Time: 0.000}";
+
+                                    moveText = $"  movep(p[{axisAngle[0]:0.#####}, {axisAngle[1]:0.#####}, {axisAngle[2]:0.#####}, {axisAngle[3]:0.#####}, {axisAngle[4]:0.#####}, {axisAngle[5]:0.#####}],a={linearAccel:0.#####},{speed},r={zoneDistance})";
+                                    break;
+                                }
                         }
                     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                     foreach (var command in programTarget.Commands.Where(c => c.RunBefore))
                     {

@@ -349,6 +349,7 @@ namespace Robots.Grasshopper
                 valueList.ListItems.Clear();
                 valueList.ListItems.Add(new GH_ValueListItem("Joint", "\"Joint\""));
                 valueList.ListItems.Add(new GH_ValueListItem("Linear", "\"Linear\""));
+                valueList.ListItems.Add(new GH_ValueListItem("constantSpeed", "\"constantSpeed\""));
                 Instances.ActiveCanvas.Document.AddObject(valueList, false);
                 parameter.AddSource(valueList);
                 parameter.CollectData();
